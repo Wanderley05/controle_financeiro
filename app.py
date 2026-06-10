@@ -19,7 +19,7 @@ from auth import (
     verify_password
 )
 
-# Inicialização
+
 create_tables()
 
 st.set_page_config(
@@ -28,9 +28,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ================================================
-# CSS ABSURDO COM ANIMAÇÕES
-# ================================================
+
 
 st.markdown("""
 <style>
@@ -363,16 +361,12 @@ label, .stSelectbox label, .stTextInput label, .stNumberInput label {
 </style>
 """, unsafe_allow_html=True)
 
-# ================================================
-# ESTADO DE SESSÃO
-# ================================================
+
 
 if "logged" not in st.session_state:
     st.session_state.logged = False
 
-# ================================================
-# CABEÇALHO
-# ================================================
+
 
 st.title("💸 FinanceFlow")
 
@@ -393,9 +387,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ================================================
-# MENU SIDEBAR
-# ================================================
+
 
 if not st.session_state.logged:
     menu = st.sidebar.selectbox("🔐 Acesso", ["Login", "Cadastro"])
@@ -416,16 +408,15 @@ else:
     """, unsafe_allow_html=True)
     menu = "logado"
 
-# ================================================
-# CADASTRO
-# ================================================
+
 
 if not st.session_state.logged and menu == "Cadastro":
     st.subheader("✨ Criar Conta")
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         novo_usuario = st.text_input("Usuário", placeholder="seu_usuario")
-        nova_senha = st.text_input("Senha", type="password", placeholder="••••••••")
+        nova_senha = st.text_input(
+            "Senha", type="password", placeholder="••••••••")
         if st.button("🚀 Criar Conta", use_container_width=True):
             if not novo_usuario or not nova_senha:
                 st.error("⚠️ Preencha todos os campos.")
@@ -438,9 +429,7 @@ if not st.session_state.logged and menu == "Cadastro":
                 except:
                     st.error("❌ Usuário já existe.")
 
-# ================================================
-# LOGIN
-# ================================================
+
 
 if not st.session_state.logged and menu == "Login":
     st.subheader("🔑 Entrar")
@@ -459,9 +448,7 @@ if not st.session_state.logged and menu == "Login":
             else:
                 st.error("❌ Usuário ou senha incorretos.")
 
-# ================================================
-# ÁREA LOGADA
-# ================================================
+
 
 if st.session_state.logged:
 
@@ -474,23 +461,23 @@ if st.session_state.logged:
         st.session_state.logged = False
         st.rerun()
 
-    # ========================
-    # NOVA TRANSAÇÃO
-    # ========================
-
+    
     if aba == "➕ Nova Transação":
         st.subheader("➕ Nova Transação")
 
         col1, col2 = st.columns(2)
         with col1:
-            descricao = st.text_input("Descrição", placeholder="Ex: Aluguel, Salário...")
-            valor = st.number_input("Valor (R$)", min_value=0.01, step=0.01, format="%.2f")
+            descricao = st.text_input(
+                "Descrição", placeholder="Ex: Aluguel, Salário...")
+            valor = st.number_input(
+                "Valor (R$)", min_value=0.01, step=0.01, format="%.2f")
         with col2:
             categoria = st.selectbox("Categoria", [
                 "🍔 Alimentação", "🚗 Transporte", "🏠 Moradia",
                 "🎮 Lazer", "💼 Salário", "📦 Outros"
             ])
-            tipo = st.radio("Tipo", ["💚 Receita", "🔴 Despesa"], horizontal=True)
+            tipo = st.radio(
+                "Tipo", ["💚 Receita", "🔴 Despesa"], horizontal=True)
 
         st.markdown("---")
 
@@ -505,9 +492,9 @@ if st.session_state.logged:
                     descricao, valor, categoria_limpa, tipo_limpo
                 )
                 add_log(f"Transação criada: {descricao}")
-                st.success(f"✅ Transação **{descricao}** salva com sucesso!")    # ========================
-    # DASHBOARD
-    # ========================
+                
+                st.success(f"✅ Transação **{descricao}** salva com sucesso!")
+
 
     if aba == "📊 Dashboard":
 
@@ -516,23 +503,28 @@ if st.session_state.logged:
         if not dados:
             st.info("📭 Nenhuma transação ainda. Adicione sua primeira transação!")
         else:
-            df = pd.DataFrame(dados, columns=["ID", "Descrição", "Valor", "Categoria", "Tipo", "Data"])
+            df = pd.DataFrame(
+                dados, columns=["ID", "Descrição", "Valor", "Categoria", "Tipo", "Data"])
             df["Data"] = pd.to_datetime(df["Data"])
 
             st.subheader("📊 Dashboard Financeiro")
 
-            # Filtros
+            
             col_f1, col_f2, col_f3 = st.columns(3)
             with col_f1:
-                categoria_filtro = st.selectbox("🏷️ Categoria", ["Todas"] + sorted(df["Categoria"].unique().tolist()))
+                categoria_filtro = st.selectbox(
+                    "🏷️ Categoria", ["Todas"] + sorted(df["Categoria"].unique().tolist()))
             with col_f2:
-                tipo_filtro = st.selectbox("📂 Tipo", ["Todos", "Receita", "Despesa"])
+                tipo_filtro = st.selectbox(
+                    "📂 Tipo", ["Todos", "Receita", "Despesa"])
             with col_f3:
-                ordem = st.selectbox("🔃 Ordenar por", ["Mais recente", "Mais antigo", "Maior valor", "Menor valor"])
+                ordem = st.selectbox(
+                    "🔃 Ordenar por", ["Mais recente", "Mais antigo", "Maior valor", "Menor valor"])
 
             df_filtrado = df.copy()
             if categoria_filtro != "Todas":
-                df_filtrado = df_filtrado[df_filtrado["Categoria"] == categoria_filtro]
+                df_filtrado = df_filtrado[df_filtrado["Categoria"]
+                                    == categoria_filtro]
             if tipo_filtro != "Todos":
                 df_filtrado = df_filtrado[df_filtrado["Tipo"] == tipo_filtro]
 
@@ -545,22 +537,25 @@ if st.session_state.logged:
             col_ord, asc_ord = order_map[ordem]
             df_filtrado = df_filtrado.sort_values(col_ord, ascending=asc_ord)
 
-            # Métricas
+            
             st.markdown("---")
-            receitas  = df_filtrado[df_filtrado["Tipo"] == "Receita"]["Valor"].sum()
-            despesas  = df_filtrado[df_filtrado["Tipo"] == "Despesa"]["Valor"].sum()
-            saldo     = receitas - despesas
+            receitas = df_filtrado[df_filtrado["Tipo"]
+                            == "Receita"]["Valor"].sum()
+            despesas = df_filtrado[df_filtrado["Tipo"]
+                            == "Despesa"]["Valor"].sum()
+            saldo = receitas - despesas
             n_transac = len(df_filtrado)
 
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("💚 Receitas",   f"R$ {receitas:,.2f}")
             c2.metric("🔴 Despesas",   f"R$ {despesas:,.2f}")
-            c3.metric("💰 Saldo",      f"R$ {saldo:,.2f}", delta=f"{'positivo' if saldo >= 0 else 'negativo'}")
+            c3.metric("💰 Saldo",      f"R$ {saldo:,.2f}",
+                    delta=f"{'positivo' if saldo >= 0 else 'negativo'}")
             c4.metric("📋 Transações", f"{n_transac}")
 
             st.markdown("---")
 
-            # Gráficos
+            
             col_g1, col_g2 = st.columns(2)
 
             with col_g1:
@@ -587,11 +582,13 @@ if st.session_state.logged:
             with col_g2:
                 df_linha = df_filtrado.copy()
                 df_linha["DataStr"] = df_linha["Data"].dt.strftime("%d/%m/%Y")
-                evolucao = df_linha.groupby(["DataStr", "Tipo"])["Valor"].sum().reset_index()
+                evolucao = df_linha.groupby(["DataStr", "Tipo"])[
+                    "Valor"].sum().reset_index()
                 fig_bar = px.bar(
                     evolucao, x="DataStr", y="Valor", color="Tipo",
                     title="📈 Receitas vs Despesas por Data",
-                    color_discrete_map={"Receita": "#10b981", "Despesa": "#ef4444"},
+                    color_discrete_map={
+                        "Receita": "#10b981", "Despesa": "#ef4444"},
                     barmode="group"
                 )
                 fig_bar.update_layout(
@@ -600,25 +597,29 @@ if st.session_state.logged:
                     font=dict(color="#e8e8f0", family="Space Grotesk"),
                     title_font=dict(size=16, color="#c4b5fd"),
                     legend=dict(font=dict(color="#e8e8f0")),
-                    xaxis=dict(gridcolor="rgba(139,92,246,0.1)", color="#a78bfa"),
-                    yaxis=dict(gridcolor="rgba(139,92,246,0.1)", color="#a78bfa")
+                    xaxis=dict(gridcolor="rgba(139,92,246,0.1)",
+                            color="#a78bfa"),
+                    yaxis=dict(gridcolor="rgba(139,92,246,0.1)",
+                            color="#a78bfa")
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
 
-            # Tabela histórico
+            
             st.subheader("📋 Histórico")
-            df_show = df_filtrado[["ID", "Descrição", "Valor", "Categoria", "Tipo", "Data"]].copy()
+            df_show = df_filtrado[["ID", "Descrição",
+                                "Valor", "Categoria", "Tipo", "Data"]].copy()
             df_show["Data"] = df_show["Data"].dt.strftime("%d/%m/%Y %H:%M")
             df_show["Valor"] = df_show["Valor"].apply(lambda v: f"R$ {v:,.2f}")
             st.dataframe(df_show, use_container_width=True, hide_index=True)
 
-            # Excluir
+            
             st.markdown("---")
             st.subheader("🗑️ Excluir Transação")
             ids_disponiveis = df["ID"].tolist()
             col_d1, col_d2 = st.columns([3, 1])
             with col_d1:
-                excluir = st.number_input("ID da transação", min_value=1, step=1)
+                excluir = st.number_input(
+                    "ID da transação", min_value=1, step=1)
             with col_d2:
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("🗑️ Excluir", use_container_width=True):
