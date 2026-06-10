@@ -29,7 +29,6 @@ st.set_page_config(
 )
 
 
-
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -362,10 +361,8 @@ label, .stSelectbox label, .stTextInput label, .stNumberInput label {
 """, unsafe_allow_html=True)
 
 
-
 if "logged" not in st.session_state:
     st.session_state.logged = False
-
 
 
 st.title("💸 FinanceFlow")
@@ -388,7 +385,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 if not st.session_state.logged:
     menu = st.sidebar.selectbox("🔐 Acesso", ["Login", "Cadastro"])
 else:
@@ -407,7 +403,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
     menu = "logado"
-
 
 
 if not st.session_state.logged and menu == "Cadastro":
@@ -430,7 +425,6 @@ if not st.session_state.logged and menu == "Cadastro":
                     st.error("❌ Usuário já existe.")
 
 
-
 if not st.session_state.logged and menu == "Login":
     st.subheader("🔑 Entrar")
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -449,7 +443,6 @@ if not st.session_state.logged and menu == "Login":
                 st.error("❌ Usuário ou senha incorretos.")
 
 
-
 if st.session_state.logged:
 
     aba = st.sidebar.radio(
@@ -461,7 +454,6 @@ if st.session_state.logged:
         st.session_state.logged = False
         st.rerun()
 
-    
     if aba == "➕ Nova Transação":
         st.subheader("➕ Nova Transação")
 
@@ -492,9 +484,8 @@ if st.session_state.logged:
                     descricao, valor, categoria_limpa, tipo_limpo
                 )
                 add_log(f"Transação criada: {descricao}")
-                
-                st.success(f"✅ Transação **{descricao}** salva com sucesso!")
 
+                st.success(f"✅ Transação **{descricao}** salva com sucesso!")
 
     if aba == "📊 Dashboard":
 
@@ -509,7 +500,6 @@ if st.session_state.logged:
 
             st.subheader("📊 Dashboard Financeiro")
 
-            
             col_f1, col_f2, col_f3 = st.columns(3)
             with col_f1:
                 categoria_filtro = st.selectbox(
@@ -524,7 +514,7 @@ if st.session_state.logged:
             df_filtrado = df.copy()
             if categoria_filtro != "Todas":
                 df_filtrado = df_filtrado[df_filtrado["Categoria"]
-                                    == categoria_filtro]
+                                          == categoria_filtro]
             if tipo_filtro != "Todos":
                 df_filtrado = df_filtrado[df_filtrado["Tipo"] == tipo_filtro]
 
@@ -537,12 +527,11 @@ if st.session_state.logged:
             col_ord, asc_ord = order_map[ordem]
             df_filtrado = df_filtrado.sort_values(col_ord, ascending=asc_ord)
 
-            
             st.markdown("---")
             receitas = df_filtrado[df_filtrado["Tipo"]
-                            == "Receita"]["Valor"].sum()
+                                   == "Receita"]["Valor"].sum()
             despesas = df_filtrado[df_filtrado["Tipo"]
-                            == "Despesa"]["Valor"].sum()
+                                   == "Despesa"]["Valor"].sum()
             saldo = receitas - despesas
             n_transac = len(df_filtrado)
 
@@ -550,12 +539,11 @@ if st.session_state.logged:
             c1.metric("💚 Receitas",   f"R$ {receitas:,.2f}")
             c2.metric("🔴 Despesas",   f"R$ {despesas:,.2f}")
             c3.metric("💰 Saldo",      f"R$ {saldo:,.2f}",
-                    delta=f"{'positivo' if saldo >= 0 else 'negativo'}")
+                      delta=f"{'positivo' if saldo >= 0 else 'negativo'}")
             c4.metric("📋 Transações", f"{n_transac}")
 
             st.markdown("---")
 
-            
             col_g1, col_g2 = st.columns(2)
 
             with col_g1:
@@ -598,21 +586,19 @@ if st.session_state.logged:
                     title_font=dict(size=16, color="#c4b5fd"),
                     legend=dict(font=dict(color="#e8e8f0")),
                     xaxis=dict(gridcolor="rgba(139,92,246,0.1)",
-                            color="#a78bfa"),
+                               color="#a78bfa"),
                     yaxis=dict(gridcolor="rgba(139,92,246,0.1)",
-                            color="#a78bfa")
+                               color="#a78bfa")
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
 
-            
             st.subheader("📋 Histórico")
             df_show = df_filtrado[["ID", "Descrição",
-                                "Valor", "Categoria", "Tipo", "Data"]].copy()
+                                   "Valor", "Categoria", "Tipo", "Data"]].copy()
             df_show["Data"] = df_show["Data"].dt.strftime("%d/%m/%Y %H:%M")
             df_show["Valor"] = df_show["Valor"].apply(lambda v: f"R$ {v:,.2f}")
             st.dataframe(df_show, use_container_width=True, hide_index=True)
 
-            
             st.markdown("---")
             st.subheader("🗑️ Excluir Transação")
             ids_disponiveis = df["ID"].tolist()
